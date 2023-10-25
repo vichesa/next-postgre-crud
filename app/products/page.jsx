@@ -2,8 +2,9 @@ import { PrismaClient } from "@prisma/client";
 import AddProduct from "./addProduct";
 import DeleteProduct from "./deleteProduct";
 import UpdateProduct from "./updateProduct";
-
 const prisma = new PrismaClient();
+
+export const dynamic = "force-dynamic";
 
 const getProducts = async () => {
   const res = await prisma.product.findMany({
@@ -18,45 +19,45 @@ const getProducts = async () => {
   return res;
 };
 
-const getBrand = async () => {
+const getBrands = async () => {
   const res = await prisma.brand.findMany();
   return res;
 };
 
 const Product = async () => {
-  const [products, brands] = await Promise.all([getProducts(), getBrand()]);
-  //   console.log(products);
+  const [products, brands] = await Promise.all([getProducts(), getBrands()]);
 
   return (
     <div>
-      <AddProduct brands={brands} />
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Title</th>
-              <th>Price</th>
-              <th>Brand</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((p, index) => (
-              <tr key={p.id}>
-                <th>{index + 1}</th>
-                <td>{p.title}</td>
-                <td>{p.price}</td>
-                <td>{p.brand.name}</td>
-                <td>
-                  <DeleteProduct product={p} />
-                  <UpdateProduct product={p} brands={brands} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mb-2">
+        <AddProduct brands={brands} />
       </div>
+
+      <table className="table w-full">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Brand</th>
+            <th className="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product, index) => (
+            <tr key={product.id}>
+              <td>{index + 1}</td>
+              <td>{product.title}</td>
+              <td>{product.price}</td>
+              <td>{product.brand.name}</td>
+              <td className="flex justify-center space-x-1">
+                <UpdateProduct brands={brands} product={product} />
+                <DeleteProduct product={product} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
