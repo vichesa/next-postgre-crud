@@ -43,7 +43,7 @@ const Product = async () => {
           </thead>
           <tbody>
             {products.map((p, index) => (
-              <tr>
+              <tr key={p.id}>
                 <th>{index + 1}</th>
                 <td>{p.title}</td>
                 <td>{p.price}</td>
